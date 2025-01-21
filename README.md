@@ -1,0 +1,242 @@
+# Probabilistic and Reconstruction-based Competency Estimation (PaRCE)
+
+This is the codebase for the paper titled "PaRCE: Probabilisitc and Reconstruction-based Competency Estimation for CNN-based Image Classification," which was submitted to the 2025 IEEE / CVF Computer Vision and Pattern Recognition Conference (CVPR). This README describes how to reproduce the results achieved in this paper. Note that most of the steps listed here can be skipped by downloading the saved datasets ([lunar](https://zenodo.org/records/14115095?token=eyJhbGciOiJIUzUxMiJ9.eyJpZCI6Ijc3MjI1ODFkLTk3YzMtNDdmNy05ZWI4LWUwZmZlZWQ2NGExNCIsImRhdGEiOnt9LCJyYW5kb20iOiJkNTgwYWFiMDIyNzEyYmU3NDQyMTkyYTEzYTU2MjkyNSJ9._h_DK4ruBejJQzXykYj7maeGYsww0tCyMB6X7YFBptqFISYtwrNBG8S7MhtUPDpLoGglv2m00Kxk1I0fAQ7PRw), [speed](https://zenodo.org/records/14116705?token=eyJhbGciOiJIUzUxMiJ9.eyJpZCI6IjVjNTY0YmRhLTQzY2ItNDMzMC1iNTY4LWQ5MzRlMjNlMjhkNyIsImRhdGEiOnt9LCJyYW5kb20iOiI2NWY4MDNlOWFjNWYxZmQ5ODg2YjA1YWM3ODE3NmM3OCJ9.QgIH6XwFdt8YfOGyXJxtpdV27y-rpviI1dy_TJFcU7hpVv8Z8aKr6aOpno6gjtWrAnErvnA96dEkZrO91xkb6g), [pavilion](https://zenodo.org/records/14117470?token=eyJhbGciOiJIUzUxMiJ9.eyJpZCI6IjRlMmUxMjQ1LWE0NjQtNDg3NC1iZmMyLTQwMjIzNWY3NmQ4ZCIsImRhdGEiOnt9LCJyYW5kb20iOiI0YjM2MTA4ZDNkM2MyNjQ3M2E1YmU0MDIwYThiNjU3ZCJ9.ujBXqHToAs1Hcaz9K0Mk2VXzm1lY6RixqWoaXj6UtH3FLlooAzRnCucHY1_VgJD5YPAT7DPYlwn44uhbBhlppQ)) and trained models ([lunar](https://zenodo.org/records/14117660?token=eyJhbGciOiJIUzUxMiJ9.eyJpZCI6IjQ0ZjA3Yjc3LTkyOTEtNDU0Yi05YjkzLWU0M2JkZjUxYTEyZSIsImRhdGEiOnt9LCJyYW5kb20iOiIxMTYwOTY0NmEzY2UyOWE2MTUxMGMxNzIyNDliNzhmYiJ9.AEOqTQwzStDNwMVXWAiImxCXGvuOy3CNmgWoEGW3rlA7uSsSd2wFNkYrc4flVHDvcmrKLimaURupmd26DzaZPA), [speed](https://zenodo.org/records/14117780?token=eyJhbGciOiJIUzUxMiJ9.eyJpZCI6IjlhNGQ1ZmZhLWU4YzEtNDU4OS05NGFlLTk4MDZmYzY0ODZiNSIsImRhdGEiOnt9LCJyYW5kb20iOiJjZGFmMTA3MTA0YTFjODQ4ZjAxYTM0MTc1ZWJkMmRkMSJ9.T_jsMnKIgQOKSxsfluK9Qmo3L6jBHpS-KtiLV8SoFTMbUngVpoEF-BwkXyHD_wOZeiN-zr1h3fURQobbmD8kMA), [pavilion](https://zenodo.org/records/14117974?token=eyJhbGciOiJIUzUxMiJ9.eyJpZCI6ImUyNGM4YThhLTM2YjktNDY3Mi1iMjJmLTBlZTJlZmVhNWM1NyIsImRhdGEiOnt9LCJyYW5kb20iOiJmY2ViYjA0NGQ2Y2NmZDc4MmY5MTkyMzU0OGRkMmVkMiJ9.KoR-d-bJKfyRW0bEyEC5bdrmKwCfyHGEKDtFnbQx-QTBON_AV7_hQ2AKFnkflyWpqOiRkBb8-mWzjvsMYbROfQ)) provided through Zenodo.
+
+## 0) Set Up Codebase
+
+### 0a. Clone this repository
+
+Clone this repository:
+```
+git clone https://github.com/sarapohland/general-parce.git
+```
+
+### 0b. Set up the source directory
+
+It's recommended that you create an environment with Python 3.8:
+```
+conda create -n parce python=3.8
+```
+
+Then, in the main folder (`parce`), run the following command:
+```
+pip install -e .
+```
+
+## 1) Setup Training Dataset
+
+### 1a. Download the dataset files
+
+To replicate the results presented in the paper, download the [lunar](https://zenodo.org/records/14115095?token=eyJhbGciOiJIUzUxMiJ9.eyJpZCI6Ijc3MjI1ODFkLTk3YzMtNDdmNy05ZWI4LWUwZmZlZWQ2NGExNCIsImRhdGEiOnt9LCJyYW5kb20iOiJkNTgwYWFiMDIyNzEyYmU3NDQyMTkyYTEzYTU2MjkyNSJ9._h_DK4ruBejJQzXykYj7maeGYsww0tCyMB6X7YFBptqFISYtwrNBG8S7MhtUPDpLoGglv2m00Kxk1I0fAQ7PRw), [speed](https://zenodo.org/records/14116705?token=eyJhbGciOiJIUzUxMiJ9.eyJpZCI6IjVjNTY0YmRhLTQzY2ItNDMzMC1iNTY4LWQ5MzRlMjNlMjhkNyIsImRhdGEiOnt9LCJyYW5kb20iOiI2NWY4MDNlOWFjNWYxZmQ5ODg2YjA1YWM3ODE3NmM3OCJ9.QgIH6XwFdt8YfOGyXJxtpdV27y-rpviI1dy_TJFcU7hpVv8Z8aKr6aOpno6gjtWrAnErvnA96dEkZrO91xkb6g), and [pavilion](https://zenodo.org/records/14117470?token=eyJhbGciOiJIUzUxMiJ9.eyJpZCI6IjRlMmUxMjQ1LWE0NjQtNDg3NC1iZmMyLTQwMjIzNWY3NmQ4ZCIsImRhdGEiOnt9LCJyYW5kb20iOiI0YjM2MTA4ZDNkM2MyNjQ3M2E1YmU0MDIwYThiNjU3ZCJ9.ujBXqHToAs1Hcaz9K0Mk2VXzm1lY6RixqWoaXj6UtH3FLlooAzRnCucHY1_VgJD5YPAT7DPYlwn44uhbBhlppQ) dataset files through the provided links. Create a folder called `data` in the main directory (`parce`) and unzip each of the downloaded files in this folder. You should have three subfolders (`lunar`, `speed`, and `pavilion`) that each contain a dataset file called `dataset.npz`. If you simply want to use the default datasets, you can skip to step 2. If you want to create a new dataset, proceed through the remaining substeps in this section.
+
+### 1b. Set up directory structure
+
+By default, datasets are assumed to be saved in the following structure:
+
+|-- data  
+&emsp;|-- dataset1  
+&emsp;&emsp;|-- dataset.npz  
+&emsp;&emsp;|-- images  
+&emsp;&emsp;&emsp;|-- ID  
+&emsp;&emsp;&emsp;&emsp;|-- class1  
+&emsp;&emsp;&emsp;&emsp;|-- class2  
+&emsp;&emsp;&emsp;|-- OOD  
+&emsp;&emsp;&emsp;&emsp;|-- class1  
+&emsp;&emsp;&emsp;&emsp;|-- class2  
+&emsp;&emsp;&emsp;|-- unsorted  
+&emsp;|-- dataset2  
+&emsp;&emsp;|-- dataset.npz  
+&emsp;&emsp;|-- images   
+&emsp;&emsp;&emsp;|-- ID  
+&emsp;&emsp;&emsp;&emsp;|-- class1  
+&emsp;&emsp;&emsp;&emsp;|-- class2  
+&emsp;&emsp;&emsp;|-- OOD  
+&emsp;&emsp;&emsp;&emsp;|-- class1  
+&emsp;&emsp;&emsp;&emsp;|-- class2  
+&emsp;&emsp;&emsp;|-- unsorted 
+
+The unsorted folder should contain in-distribution training images that have not been labeled, while the ID folder contains all labeled in-distribution images organized by their class labels. If you already have a labeled dataset, you can organize them in the ID folder and skip to step 1d. If you only have unlabeled data, you can place it all in the unsorted folder and proceed to step 1c. The OOD folder should contain all out-of-distribution images. If this data is labeled, it can be orgnized into its class labels. If it is unlabeled, you can place it all into the same subfolder within the OOD folder. A dataset that has already been set up (following step 1d) will be saved in a compressed NumPy file called dataset.npz in the main dataset folder.
+
+### 1c. Cluster unlabeled data
+
+If you have labeled data, skip to the next step. If you have unlabeled in-distribution data saved in the unsorted directory, you can cluster these images using the create_dataset script:
+
+```
+python src/datasets/create_dataset.py <path_to_dataset> --cluster_data
+```
+
+This command will cluster the unsorted images and save them in subfolders within the ID folder.
+
+### 1d. Save custom dataset
+
+Once you have existing classes of in-distribution data, you can save a dataset of training, test, and OOD data using the create_dataset script:
+
+```
+python src/datasets/create_dataset.py <path_to_dataset> --save_data
+```
+
+Note that this step can be combined with the previous one. By separating these two steps, you can validate the generated clusters before saving your dataset. You can also use to height and width arguments to resize your images if desired. This script will save a compressed NumPy file called dataset.npz in your dataset directory.
+
+### 1e. Update dataloader setup script
+
+Use the existing cases in the setup_dataloader script to enable the use of your custom dataset. You will need to add a section to the get_class_names, get_num_classes, and the setup_loader functions.
+
+## 2) Generate Classification Model
+
+### 2a. Download the classification model files
+
+To replicate the results presented in the paper, download the [lunar](https://zenodo.org/records/14117660?token=eyJhbGciOiJIUzUxMiJ9.eyJpZCI6IjQ0ZjA3Yjc3LTkyOTEtNDU0Yi05YjkzLWU0M2JkZjUxYTEyZSIsImRhdGEiOnt9LCJyYW5kb20iOiIxMTYwOTY0NmEzY2UyOWE2MTUxMGMxNzIyNDliNzhmYiJ9.AEOqTQwzStDNwMVXWAiImxCXGvuOy3CNmgWoEGW3rlA7uSsSd2wFNkYrc4flVHDvcmrKLimaURupmd26DzaZPA), [speed](https://zenodo.org/records/14117780?token=eyJhbGciOiJIUzUxMiJ9.eyJpZCI6IjlhNGQ1ZmZhLWU4YzEtNDU4OS05NGFlLTk4MDZmYzY0ODZiNSIsImRhdGEiOnt9LCJyYW5kb20iOiJjZGFmMTA3MTA0YTFjODQ4ZjAxYTM0MTc1ZWJkMmRkMSJ9.T_jsMnKIgQOKSxsfluK9Qmo3L6jBHpS-KtiLV8SoFTMbUngVpoEF-BwkXyHD_wOZeiN-zr1h3fURQobbmD8kMA), and [pavilion](https://zenodo.org/records/14117974?token=eyJhbGciOiJIUzUxMiJ9.eyJpZCI6ImUyNGM4YThhLTM2YjktNDY3Mi1iMjJmLTBlZTJlZmVhNWM1NyIsImRhdGEiOnt9LCJyYW5kb20iOiJmY2ViYjA0NGQ2Y2NmZDc4MmY5MTkyMzU0OGRkMmVkMiJ9.KoR-d-bJKfyRW0bEyEC5bdrmKwCfyHGEKDtFnbQx-QTBON_AV7_hQ2AKFnkflyWpqOiRkBb8-mWzjvsMYbROfQ) models through the provided links. Create a folder called `models` in the main directory (`parce`) and unzip each of the downloaded files in this folder. You should have three subfolders (`lunar`, `speed`, and `pavilion`) that each contain three zip files (`classify.zip`, `reconstruct.zip`, and `inpaint.zip`). For this step, you need the files provided in `classify.zip`. If you want to modify the configurations to train new models, go through the remaining steps in this section. To evaluate the classification model, see substep 2e. Otherwise, you can skip to step 3. 
+
+### 2b. Define the classification model architecture
+
+Create a JSON file defining your model architecture using the example given in `src/networks/classification/layers.json`. Currently, you can define simple model architectures composed of convolutional, pooling, and fully-connected (linear) layers with linear, relu, hyperbolic tangent, sigmoid, and softmax activation functions. You can also perform 1D and 2D batch normalization and add a flattening layer in between other layers. For convolutional layers, you must specify the number of input and output channels and the kernel size. You can optionally provide the stride length and amount of zero padding. For pooling layers, you must specify the pooling function (max or average) and the kernel size. Finally, for fully-connected layers, you must specify the number of input and output nodes.
+
+### 2c. Define the classification training parameters
+
+Create a configuration file defining your training parameters using the example given in `src/networks/classification/train.config`. You must specify the optimizer (sgd or adam), as well as the relevant optimizer parameters. Here you should also specify the desired loss function, number of epochs, and training/test batch sizes.
+
+### 2d. Train the classification model
+
+You can train your model using the train script in the networks classification folder:
+
+```
+python src/networks/classification/train.py --train_data <dataset> --output_dir models/<dataset>/classify/
+```
+
+The argument train_data is used to indicate which dataset should be used to train your classification model, which should be lunar, speed, or pavilion if you are using the default training datasets. The argument output_dir is used to define where your trained classification model will be saved. (This is `models/<dataset>/classify` for the default models downloaded in 2a.) The arguments network_file and train_config can be used to specify the location of your model architecture JSON file (created in 2b) and training parameter config file (created in 2c) if you are not using ones contained in output_dir. You can optionally use the use_gpu flag if you want to train your model using a GPU.
+
+### 2e. Evaluate the classification model
+
+You can evaluate your model using the test script in the networks classification folder:
+
+```
+python src/networks/classification/test.py --test_data <dataset> --model_dir models/<dataset>/classify/
+```
+
+The argument test_data is used to indicate which dataset should be used to evaluate your classification model, which should be lunar, speed, or pavilion if you are using the default evaluation datasets. The argument model_dir is used to specify where your trained classification model was saved. This should be the same location defined as the output_dir in step 2d. You can optionally use the use_gpu flag if you want to evaluate your model using a GPU. This script will save a confusion matrix to the model_dir directory.
+
+## 3) Design Competency Estimator
+
+### 3a. Download the competency model files
+
+If you have not done so already, download the [lunar](https://zenodo.org/records/14117660?token=eyJhbGciOiJIUzUxMiJ9.eyJpZCI6IjQ0ZjA3Yjc3LTkyOTEtNDU0Yi05YjkzLWU0M2JkZjUxYTEyZSIsImRhdGEiOnt9LCJyYW5kb20iOiIxMTYwOTY0NmEzY2UyOWE2MTUxMGMxNzIyNDliNzhmYiJ9.AEOqTQwzStDNwMVXWAiImxCXGvuOy3CNmgWoEGW3rlA7uSsSd2wFNkYrc4flVHDvcmrKLimaURupmd26DzaZPA), [speed](https://zenodo.org/records/14117780?token=eyJhbGciOiJIUzUxMiJ9.eyJpZCI6IjlhNGQ1ZmZhLWU4YzEtNDU4OS05NGFlLTk4MDZmYzY0ODZiNSIsImRhdGEiOnt9LCJyYW5kb20iOiJjZGFmMTA3MTA0YTFjODQ4ZjAxYTM0MTc1ZWJkMmRkMSJ9.T_jsMnKIgQOKSxsfluK9Qmo3L6jBHpS-KtiLV8SoFTMbUngVpoEF-BwkXyHD_wOZeiN-zr1h3fURQobbmD8kMA), and [pavilion](https://zenodo.org/records/14117974?token=eyJhbGciOiJIUzUxMiJ9.eyJpZCI6ImUyNGM4YThhLTM2YjktNDY3Mi1iMjJmLTBlZTJlZmVhNWM1NyIsImRhdGEiOnt9LCJyYW5kb20iOiJmY2ViYjA0NGQ2Y2NmZDc4MmY5MTkyMzU0OGRkMmVkMiJ9.KoR-d-bJKfyRW0bEyEC5bdrmKwCfyHGEKDtFnbQx-QTBON_AV7_hQ2AKFnkflyWpqOiRkBb8-mWzjvsMYbROfQ) models through the provided links. Create a folder called `models` in the main directory (`parce`) and unzip each of the downloaded files in this folder. You should have three subfolders (`lunar`, `speed`, and `pavilion`) that each contain three zip files (`classify.zip`, `reconstruct.zip`, and `inpaint.zip`). For this step, you need the files provided in `classify.zip` and `reconstruct.zip`. The trained competency estimators used in the paper are saved in files called `parce.p` in these reconstruction folders. If you want to modify the configurations to train new models, go through the remaining steps in this section. To evaluate the reconstruction model, see substep 3e. To evaluate the competency estimator, see 3g. To visualize examples of model competency estimates, see substep 3h. Otherwise, you can skip to step 4. 
+
+### 3b. Define the reconstruction model architecture
+
+Create a JSON file defining your model architecture using the example given in `src/networks/reconstruction/layers.json`. The reconstruction model used by the competency estimator is meant to reconstruct the input image. Currently, you can define simple model architectures composed of convolutional, pooling, transposed convolutional, unsampling, and fully-connected (linear) layers with linear, relu, hyperbolic tangent, sigmoid, and softmax activation functions. You can also perform 1D and 2D batch normalization and add an unflattening layer in between other layers. For transposed convolutional layers, you must specify the number of input and output channels and the kernel size. You can optionally provide the stride length and the input/output zero padding. For unsampling layers, you must specify the scale factor or the target output size. If the unsampling mode is not specified, then the 'nearest' unsampling technique will be used. For fully-connected layers, you must specify the number of input and output nodes. Finally, for unflattening, the number of output channels, as well as the resulting height and width, must be provided.
+
+### 3c. Define the reconstruction training parameters
+
+Create a configuration file defining your training parameters using the example given in `src/networks/reconstruction/train.config`. You must specify the optimizer (sgd or adam), as well as the relevant optimizer parameters. Here you should also specify the desired loss function, number of epochs, and training/test batch sizes.
+
+### 3d. Train the reconstruction model
+
+To train the image reconstruction model, you can use the train script in the networks reconstruction folder:
+
+```
+python src/networks/reconstruction/train.py reconstruct --architecture autoencoder --train_data <dataset> --model_dir models/<dataset>/classify/ --output_dir models/<dataset>/reconstruct/
+```
+
+The argument train_data is used to indicate which dataset should be used to train your reconstruction model, which should be lunar, speed, or pavilion if you are using the default training datasets. The argument model_dir is used to specify where your trained classification model was saved. This should be the same location defined as the output_dir in step 2d. The argument output_dir is used to define where your trained reconstruction model will be saved. (This is `models/<dataset>/reconstruct` for the default models.) The arguments network_file and train_config can be used to specify the location of your model architecture JSON file (created in 3b) and training parameter config file (created in 3c) if you are not using ones contained in output_dir. You can optionally use the use_gpu flag if you want to train your model using a GPU.
+
+### 3e. Evaluate the reconstruction model
+
+To evaluate the image reconstruction model, you can use the test script in the networks reconstruction folder:
+
+```
+python src/networks/reconstruction/test.py reconstruct --architecture autoencoder --test_data <dataset> --model_dir models/<dataset>/classify/ --decoder_dir models/<dataset>/reconstruct/
+```
+
+The argument test_data is used to indicate which dataset should be used to evaluate your reconstruction model, which should be lunar, speed, or pavilion if you are using the default evaluation datasets. The argument model_dir is used to specify where your trained classification model was saved, and decoder_dir is used to specify where your trained reconstruction model was saved. You can optionally use the use_gpu flag if you want to evaluate your model using a GPU. This script will save several figures (displaying the original and reconstructed images, along with the reconstruction loss) to a folder called `reconstruction` in decoder_dir.
+
+### 3f. Train the competency estimator
+
+You can train an competency estimator for your model using the train script in the competency folder:
+
+```
+python src/competency/train.py --train_data <dataset> --model_dir models/<dataset>/classify/ --decoder_dir models/<dataset>/reconstruct/
+```
+
+The argument train_data is used to indicate which dataset should be used to train the competency estimator, which should be lunar, speed, or pavilion if you are using the default training datasets. The argument model_dir is used to specify where your trained classification model was saved, and decoder_dir is used to specify where your trained reconstruction model was saved. You can optionally use the use_gpu flag if you want to train your model using a GPU.
+
+### 3g. Evaluate the competency estimator 
+
+You can evaluate your competency estimator using the test script in the competency folder:
+
+```
+python src/competency/test.py --test_data <dataset> --model_dir models/<dataset>/classify/ --decoder_dir models/<dataset>/reconstruct/
+```
+
+The argument test_data is used to indicate which dataset should be used to evaluate the competency estimator, which should be lunar, speed, or pavilion if you are using the default evaluation datasets. The argument model_dir is used to specify where your trained classification model was saved, and decoder_dir is used to specify where your trained reconstruction model was saved. You can optionally use the use_gpu flag if you want to evaluate your model using a GPU. This script will generate plots of the reconstruction loss distributions and probabilistic competency estimates for the correctly classified and misclassified in-distribution data, as well as the out-of-distribution data, and save them to the decoder_dir directory.
+
+### 3h. Visualize the competency estimates
+
+You can visualize the competency estimates for each test image using the visualize script in the competency folder:
+
+```
+python src/competency/visualize.py --test_data <dataset> --model_dir models/<dataset>/classify/ --decoder_dir models/<dataset>/reconstruct/
+```
+
+The argument test_data is used to indicate which dataset should be used for visualization, which should be lunar, speed, or pavilion if you are using the default evaluation datasets. The argument model_dir is used to specify where your trained classification model was saved, and decoder_dir is used to specify where your trained reconstruction model was saved. You can optionally use the use_gpu flag if you want to visualize the model estimates using a GPU. This script will save figures of the input image and competency score to subfolders (correct, incorrect, and ood) in a folder called `competency` in decoder_dir.
+
+## 4) Compare Competency Estimator to Existing Methods
+
+### 4a. Obtain ensemble of classification models
+
+The classification folders referenced in step 2a contain multiple model files to be used as an ensemble of classifiers. If you want to replicate our results, make sure you have all of these files downloaded in the `classify` folder. If you are working with new datasets and want to analyze the performance of ensembling, you should generate an ensemble of classification models, following the instructions in step 2.
+
+### 4b. Evaluate competency methods for manually collected data
+
+We compare our competency scores to a number of uncertainty quantification (UQ) and out-of-distribution (OOD) detection methods, which are implemented in `src/comparison/overall/methods.py`. We can collect results for each method individually using the evaluate script in that same folder:
+
+```
+python src/comparison/overall/evaluate.py parce --test_data <dataset> --model_dir models/<dataset>/classify/ --decoder_dir models/<dataset>/reconstruct/ --data_file results/<dataset>/unmodified/data/parce.csv
+```
+
+In the command above, you can replace `parce` with each of the available methods (softmax, temperature, dropout, ensemble, energy, odin, openmax, dice, kl, mahalanobis, and knn) and select the CSV file where you would like to save the results for the particular method. The argument test_data is used to indicate which dataset should be used for evaluation, which should be lunar, speed, or pavilion if you are using the default evaluation datasets. The argument model_dir is used to specify where your trained classification model was saved, and decoder_dir is used to specify where your trained reconstruction model was saved. Note that when evaluating the ensemble method, you will need to specify the model_dir that contains all of the model path files for the ensemble. This command will save a CSV file of results to the file indicated by the save_file argument. You can also specify a file to save/load trained estimators using the estimator_file argument.
+
+To run the evaluations for all of the existing UQ and OOD detection methods, you can use the evaluation bash script in the comparison folder:
+
+```
+./src/comparison/overall/evaluate.sh <dataset>
+```
+
+Note that you must ensure this script is executable on your machine. If it is not, you can use the command: `chmod +x ./src/comparison/overall/evaluate.sh`. This script will take several minutes to run. It will save a CSV file for all currentlly implemented methods to a folder called `results/<dataset>/unmodified/data/`.
+
+### 4c. Compare competency methods for manually collected data
+
+After running evaluations for all of the existing UQ and OOD detection methods, you can compare them using the compare script in the comparison folder:
+
+```
+python src/comparison/overall/compare.py --data_dir results/<dataset>/unmodified/data/ --plot_dir results/<dataset>/unmodified/plots/
+```
+
+You should specify the `data_dir` where your evaluations were saved in the previous step and the `plot_dir`, where you want the generated plots to be saved. This command will pull all of the CSV files from the given folder, read the results, calculate a number of performance metrics for each method, print a table comparing the methods to the terminal, and save the same table to a CSV file. It will also save figures of the score distributions for each method to the provided folder, along with ROC curves.
+
+### 4d. Evaluate competency methods across image properties
+
+You can change various images properties of the in-distribution validation set and evaluate the impact on prediction accuracy and competency estimates using the `evaluate` script in the analysis folder:
+
+```
+python src/analysis/evaluate.py --test_data <dataset> --model_dir models/<dataset>/classify/ --decoder_dir models/<dataset>/reconstruct/ --property <property> --factor <factor> --data_dir results/<dataset>/modified/data/
+```
+
+The argument test_data is used to indicate which dataset should be used to evaluate the competency estimator, which should be lunar, speed, or pavilion if you are using the default evaluation datasets. The argument model_dir is used to specify where your trained classification model was saved, and decoder_dir is used to specify where your trained reconstruction model was saved. You should specify the image property you wish to change and the corresponding factor. In our results, we modify the following properties: saturation, contrast, brightness, noise, and pixelate. This script with save classification model outputs and competency estimates to a pickle file called `<factor>.p` to the folder `<data_dir>/<property>.`
+
+To run this script for various image properties and factors, you can use the evaluation bash script in the `analysis` folder:
+
+```
+./src/analysis/evaluate.sh <dataset>
+```
+
+Note that you must ensure this script is executable on your machine. If it is not, you can use the command: `chmod +x ./src/analysis/evaluate.sh`. This script can take hours to run depending on your machine. It will create subfolders within a folder called `results/<dataset>/modified/data` for each image property and generate a pickle file corresponding to each image property factor.
+
+### 4e. Compare competency methods across image properties
+
+After running evaluations for all of the image modifications of interest, you can compare them using the compare script in the analysis folder:
+
+```
+python src/analysis/compare.py --data_dir results/<dataset>/modified/data/ --plot_dir results/<dataset>/modified/plots/
+```
+
+You should specify the `data_dir`, where your evaluations were saved in the previous step and the `plot_dir`, where you want the generated plots to be saved. This command will pull all of the pickle files from the given folder, read the results, calculate a number of performance metrics for each method, print a table comparing the methods to the terminal and save the same table to a CSV file. It will also save figures of the score distributions for each method to the provided folder, along with ROC curves.
